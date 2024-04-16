@@ -1,27 +1,27 @@
-function [F, M, L, D] = getaeroforcesmoments(DCM,V_b_fps, Omega_b_dps, delvl_deg, delvr_deg, drud_deg, betad_deg, alphad_deg, rho_sl_ft3, mach, F_prop)
-
-
+%Function that generates aero forces and moments using aero coefficient
+%data. 
+function [ fnormb_lb, faxialb_lb, fsideb_lb, mpitchb_ftlb, lrollb_ftlb, nyawb_ftlb ] = getaeroforcesmoments(rho_sl_ft3, vtrue_fps, alphad_deg, betad_deg,...
+                                           delvl_deg, delvr_deg, drud_deg, ...
+                                           pb_dps, qb_dps, rb_dps)
+      
 %% Constants
 b = 60;
 c = 80;
-m = 300000;
 S_ref = 3603;
-g = [0 0 32.2];
-g_b = m*DCM*g';
 
 %% UNIT CORRECTIONS
 %There might need to be unit corrections to the effector deflection angles.
-p = Omega_b_dps(1);
-q = Omega_b_dps(2);
-r = Omega_b_dps(3);
+p = deg2rad(pb_dps);
+q = deg2rad(qb_dps);
+r = deg2rad(rb_dps);
 beta = deg2rad(betad_deg);
 alpha = deg2rad(alphad_deg);
-V = norm(V_b_fps);
+V = vtrue_fps;
 
 %% OBTAIN COEFFICIENTS                                       
 [CLbv, CL_RE, CL_LE, CDbv, CD_RE, CD_LE, CD_RUD, CYB, CY_RE, CY_LE, ...
     CY_RUD, Cllbv, Cll_RE, Cll_LE, Cll_RUD, Cllr, Cllp, Cmbv, Cm_RE, ...
-    Cm_LE, Cm_RUD, Cm_q, Cnbv, Cn_RE, Cn_LE, Cn_RUD, Cnp, Cnr] = getaerocoefficients(alpha, mach, deg2rad(delvl_deg), deg2rad(delvr_deg), deg2rad(drud_deg));
+    Cm_LE, Cm_RUD, Cm_q, Cnbv, Cn_RE, Cn_LE, Cn_RUD, Cnp, Cnr] = getaerocoefficients(alpha, mach, delvl_deg, delvr_deg, drud_deg);
 
 %% SUM TOTAL COEFFICIENTS
 CL = CLbv + CL_RE + CL_LE;
@@ -36,7 +36,7 @@ Cn = Cnbv*beta + Cn_RE + Cn_LE + Cn_RUD + Cnp*(p*b/(2*V)) + Cnr*(r*b/(2*V));
 q_bar = 0.5*rho_sl_ft3*V;
 L = q_bar*S_ref*CL;
 D = q_bar*S_ref*CD;
-Y = q_bar*S_ref*CY;
+Y = q_bar*S_red*CY;
 % What is the "b" after q_bar????
 l = q_bar*b*S_ref*Cl;
 m = q_bar*c*S_ref*Cm;
@@ -45,7 +45,11 @@ n = q_bar*b*S_ref*Cn;
 %% ROTATE TO RIGHT FRAME
 % This needs to be in the body frame (?) ensure the upstream is doing that
 % right.
-F = [-D*cos(alpha)+L*sin(alpha)+F_prop;Y;-D*sin(alpha)-L*cos(alpha)]+g_b;
-M = [l;m;n];
+fnormb_lb = -D*sin(alpha)-L*cos(alpha);
+faxialb_lb = -D*cos(alpha)+L*sin(alpha);
+fsideb_lb = Y;
+mpitchb_ftlb = m;
+lrollb_ftlb = l;
+nyawb_ftlb = n;
 
 end 
