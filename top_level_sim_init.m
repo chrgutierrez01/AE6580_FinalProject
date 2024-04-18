@@ -93,15 +93,18 @@ addpath("lib/");
 
 %% Constants
 %%Initial Conditions
+
+% Initial Environment
+S_rho_ic_slft3 = 0.0023769;
 % Initial Bmat
-CL04_Bmat0 = 1e-3 * [0.3818 0 0; 0 -0.0120 0.0056; 0 0.0013 -0.0256];
+CL04_Bmat0_ic = 1e-3 * [0 -0.2705 0.1159; 0.0819 0 0; 0 0.0030 -0.0534];
 % Initial Position
 S_xi0_ic_ft = 0;
 S_yi0_ic_ft = 0;
 S_zi0_ic_ft = -200;
 
 % Initial Velocity
-S_ub0_ic_fps = 1000;
+S_ub0_ic_fps = 4500;
 S_vb0_ic_fps = 0;
 S_wb0_ic_fps = 0;
 
@@ -133,6 +136,15 @@ S_Iyz_ic_slf2 = 0;
 S_Izx_ic_slf2 = 0;
 
 % Initial Deflections
+S_symelv_ic_deg = 0;
+S_difelv_ic_deg = 0;
+S_drud_ic_deg = 0;
+
+% Deflection Range
+S_elev_rngdn_deg = -20;
+S_elev_rngup_deg = 20;
+S_rud_rngup_deg = 30;
+S_rud_rngdn_deg = -30;
 
 
 %%Gains
@@ -144,6 +156,8 @@ cl03_yaw_kp = 2;
 cl03_as_kp = 0.5;
 cl03_climb_kp = 1.6;
 cl03_climb_ki = 1;
+
+
 
 
 %% Control Law Subsystem Parameters

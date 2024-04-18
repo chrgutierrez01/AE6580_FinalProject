@@ -15,20 +15,20 @@ p = Omega_b_dps(1);
 q = Omega_b_dps(2);
 r = Omega_b_dps(3);
 beta = deg2rad(betad_deg);
-alpha = deg2rad(alphad_deg);
+alpha = alphad_deg;
 V = norm(V_b_fps);
 
 %% OBTAIN COEFFICIENTS                                       
 [CLbv, CL_RE, CL_LE, CDbv, CD_RE, CD_LE, CD_RUD, CYB, CY_RE, CY_LE, ...
     CY_RUD, Cllbv, Cll_RE, Cll_LE, Cll_RUD, Cllr, Cllp, Cmbv, Cm_RE, ...
-    Cm_LE, Cm_RUD, Cm_q, Cnbv, Cn_RE, Cn_LE, Cn_RUD, Cnp, Cnr] = getaerocoefficients(alpha, mach, deg2rad(delvl_deg), deg2rad(delvr_deg), deg2rad(drud_deg));
+    Cm_LE, Cm_RUD, Cm_q, Cnbv, Cn_RE, Cn_LE, Cn_RUD, Cnp, Cnr] = getaerocoefficients(alpha, mach, delvl_deg, delvr_deg, drud_deg);
 
 %% SUM TOTAL COEFFICIENTS
 CL = CLbv + CL_RE + CL_LE;
 CD = CDbv + CD_RE + CD_LE + CD_RUD;
 CY = CYB*beta + CY_RE + CY_LE + CY_RUD;
 %NEED TO ADD THE NONDIMENSIONAL PITCH ROLL AND YAW RATES ex. (r*b/(2*V))
-Cl = Cllbv*beta + Cll_RE + Cll_LE + Cll_RUD + Cllr * (r*b/(2*V)) + Cllp * (p*b/(2*V))
+Cl = Cllbv*beta + Cll_RE + Cll_LE + Cll_RUD + Cllr * (r*b/(2*V)) + Cllp * (p*b/(2*V));
 Cm = Cmbv + Cm_RE + Cm_LE + Cm_RUD + Cm_q*(q*c/(2*V));
 Cn = Cnbv*beta + Cn_RE + Cn_LE + Cn_RUD + Cnp*(p*b/(2*V)) + Cnr*(r*b/(2*V));
 
