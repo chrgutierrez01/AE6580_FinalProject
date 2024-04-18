@@ -89,10 +89,12 @@
 % catch
 %     disp('Skipping goto label updates.')
 % end
+addpath("lib/");
 
 %% Constants
 %%Initial Conditions
-
+% Initial Bmat
+CL04_Bmat0 = 1e-3 * [0.3818 0 0; 0 -0.0120 0.0056; 0 0.0013 -0.0256];
 % Initial Position
 S_xi0_ic_ft = 0;
 S_yi0_ic_ft = 0;
@@ -224,19 +226,19 @@ bus_helper(struct('BusName','B_CL03_InnerLoop','HeaderFile','','Desc','CL03 Inne
 
 %%CL04_NDI
 bus_helper(struct('BusName','B_CL04_NDI','HeaderFile','','Desc','CL04 NDI Module','DataScope','Exported','Alignment','-1'),...
-           {{'ElementName','roll_state_obm_dps2','DataType','double',  'Unit','dps2', 'Description','roll acceleration calculated in degrees'};
-            {'ElementName','pitch_state_obm_dps2','DataType','double',  'Unit','dps2', 'Description','pitch acceleration calculated in degrees'};
-            {'ElementName','yaw_state_obm_dps2','DataType','double',  'Unit','dps2', 'Description','yaw acceleration calculated in degrees'};
-            {'ElementName','as_state_obm_fps2','DataType','double',  'Unit','fps2', 'Description','axial acceleration calculated in feet'};
-            {'ElementName','climb_state_obm_fps2','DataType','double',  'Unit','fps2', 'Description','climb acceleration calculated in feet'};
-            {'ElementName','Bmat_obm','DataType','double',  'Unit','nd',    'Description','Rotation Matrix NED to Body','Dimensions',[4,5]}    
+           {{'ElementName','u_state_obm_fps2','DataType','single',  'Unit','fps2', 'Description','axial acceleration calculated in feet'};
+            {'ElementName','v_state_obm_fps2','DataType','single',  'Unit','fps2', 'Description','lateral acceleration calculated in feet'};
+            {'ElementName','w_state_obm_fps2','DataType','single',  'Unit','fps2', 'Description','climb acceleration calculated in feet'};
+            {'ElementName','roll_state_obm_dps2','DataType','single',  'Unit','dps2', 'Description','roll acceleration calculated in degrees'};
+            {'ElementName','pitch_state_obm_dps2','DataType','single',  'Unit','dps2', 'Description','pitch acceleration calculated in degrees'};
+            {'ElementName','yaw_state_obm_dps2','DataType','single',  'Unit','dps2', 'Description','yaw acceleration calculated in degrees'};
+            {'ElementName','Bmat_obm','DataType','double',  'Unit','nd',    'Description','Rotation Matrix NED to Body','Dimensions',[3,3]}    
            });
 
 %%CL05_EffectorBlender
 bus_helper(struct('BusName','B_CL05_EffBlend','HeaderFile','','Desc','CL05 Effector Blender','DataScope','Exported','Alignment','-1'),...
            {{'ElementName','symelv_cmd_deg','DataType','double',  'Unit','deg', 'Description','left elevon deflection in degrees'};
             {'ElementName','difelv_cmd_deg','DataType','double',  'Unit','deg', 'Description','right elevon deflection in degrees'};
-            {'ElementName','drud_cmd_deg','DataType','double',  'Unit','deg', 'Description','rudder deflection in degrees'};
-            {'ElementName','fprop_cmd_lbf','DataType','double',  'Unit','deg', 'Description','prop thrust in lbf'};
+            {'ElementName','drud_cmd_deg','DataType','double',  'Unit','deg', 'Description','rudder deflection in degrees'}
            });
 

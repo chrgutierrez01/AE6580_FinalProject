@@ -28,7 +28,7 @@ CL = CLbv + CL_RE + CL_LE;
 CD = CDbv + CD_RE + CD_LE + CD_RUD;
 CY = CYB*beta + CY_RE + CY_LE + CY_RUD;
 %NEED TO ADD THE NONDIMENSIONAL PITCH ROLL AND YAW RATES ex. (r*b/(2*V))
-Cl = Cllbv*beta + Cll_RE + Cll_LE + Cll_RUD + Cllr * (r*b/(2*V)) + Cllp * (p*b/(2*V));
+Cl = Cllbv*beta + Cll_RE + Cll_LE + Cll_RUD + Cllr * (r*b/(2*V)) + Cllp * (p*b/(2*V))
 Cm = Cmbv + Cm_RE + Cm_LE + Cm_RUD + Cm_q*(q*c/(2*V));
 Cn = Cnbv*beta + Cn_RE + Cn_LE + Cn_RUD + Cnp*(p*b/(2*V)) + Cnr*(r*b/(2*V));
 
