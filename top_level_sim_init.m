@@ -105,15 +105,23 @@ S_ub0_ic_fps = 1000;
 S_vb0_ic_fps = 0;
 S_wb0_ic_fps = 0;
 
+% Initial AoA, SS
+S_alphad0_ic_deg = rad2deg(atan2(S_wb0_ic_fps,S_ub0_ic_fps));
+S_betad0_ic_deg = rad2deg(asin(S_vb0_ic_fps/norm([S_ub0_ic_fps,S_vb0_ic_fps, S_wb0_ic_fps])));
+
 % Initial Euler Orientation
 S_phi0_ic_rad = 0;
-S_theta0_ic_rad = pi/10;
+S_theta0_ic_rad = 0;
 S_psi0_ic_rad = 0;
+
 
 % Initial Body Rotation Rates
 S_pb0_ic_rps = 0;
 S_qb0_ic_rps = 0;
 S_rb0_ic_rps = 0;
+S_pb0_ic_dps = rad2deg(S_pb0_ic_rps);
+S_qb0_ic_dps = rad2deg(S_qb0_ic_rps);
+S_rb0_ic_dps = rad2deg(S_rb0_ic_rps);
 
 % Initial Mass Properties
 S_mass0_ic_lbs = 300000;
@@ -123,6 +131,9 @@ S_Izz_ic_slf2 = 10^7;
 S_Ixy_ic_slf2 = 0;
 S_Iyz_ic_slf2 = 0;
 S_Izx_ic_slf2 = 0;
+
+% Initial Deflections
+
 
 %%Gains
 %CL03_InnerLoopRegulator
