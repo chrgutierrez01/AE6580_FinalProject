@@ -97,14 +97,19 @@ addpath("lib/");
 % Initial Environment
 S_rho_ic_slft3 = 0.0023769;
 % Initial Bmat
-CL04_Bmat0_ic = 1e-3 * [0 -0.2705 0.1159; 0.0819 0 0; 0 0.0030 -0.0534];
+CL04_Bmat0_ic = [-2.27242708206177e-06	3.72529029846191e-08	0	0.000107333362393547;...
+    0 -0.0155 0.0066 0;...
+    0.0047 0 0 0;...
+    0 0.002 -0.0031 0];
+%CL04_Bmat0_ic = [0 -0.0155 0.0066; 0.0047 0 0; 0 0.002 -0.0031];
+
 % Initial Position
 S_xi0_ic_ft = 0;
 S_yi0_ic_ft = 0;
 S_zi0_ic_ft = -200;
 
 % Initial Velocity
-S_ub0_ic_fps = 4500;
+S_ub0_ic_fps = 5626;
 S_vb0_ic_fps = 0;
 S_wb0_ic_fps = 0;
 
@@ -114,7 +119,7 @@ S_betad0_ic_deg = rad2deg(asin(S_vb0_ic_fps/norm([S_ub0_ic_fps,S_vb0_ic_fps, S_w
 
 % Initial Euler Orientation
 S_phi0_ic_rad = 0;
-S_theta0_ic_rad = 0;
+S_theta0_ic_rad = 7;
 S_psi0_ic_rad = 0;
 
 
@@ -135,27 +140,40 @@ S_Ixy_ic_slf2 = 0;
 S_Iyz_ic_slf2 = 0;
 S_Izx_ic_slf2 = 0;
 
-% Initial Deflections
+% Initial Deflections & Inputs
 S_symelv_ic_deg = 0;
 S_difelv_ic_deg = 0;
 S_drud_ic_deg = 0;
+S_fprop_ic_lbf = 0;
 
 % Deflection Range
 S_elev_rngdn_deg = -20;
 S_elev_rngup_deg = 20;
-S_rud_rngup_deg = 30;
-S_rud_rngdn_deg = -30;
+S_rud_rngup_deg = 20;
+S_rud_rngdn_deg = -20;
 
 
 %%Gains
 %CL03_InnerLoopRegulator
-cl03_roll_kp = 2.5;
-cl03_pitch_kp = 4;
-cl03_pitch_ki = 6.25;
-cl03_yaw_kp = 2;
-cl03_as_kp = 0.5;
-cl03_climb_kp = 1.6;
-cl03_climb_ki = 1;
+cl03_roll_kp = 0;
+
+cl03_pitch_kp = 0;
+cl03_pitch_ki = 0;
+cl03_pitch_kd = 0;
+
+cl03_yaw_kp = 0;
+cl03_yaw_ki = 0;
+
+cl03_as_kp = 0;
+cl03_as_ki = 0;
+cl03_as_kd = 0;
+
+cl03_climb_kp = 0;
+cl03_climb_ki = 0;
+
+%%Switch
+%CL05_EffBLend
+cl05_clawswitch = 0; %0 for off, 1 for on
 
 
 
@@ -257,7 +275,7 @@ bus_helper(struct('BusName','B_CL04_NDI','HeaderFile','','Desc','CL04 NDI Module
             {'ElementName','roll_state_obm_dps2','DataType','single',  'Unit','dps2', 'Description','roll acceleration calculated in degrees'};
             {'ElementName','pitch_state_obm_dps2','DataType','single',  'Unit','dps2', 'Description','pitch acceleration calculated in degrees'};
             {'ElementName','yaw_state_obm_dps2','DataType','single',  'Unit','dps2', 'Description','yaw acceleration calculated in degrees'};
-            {'ElementName','Bmat_obm','DataType','double',  'Unit','nd',    'Description','Rotation Matrix NED to Body','Dimensions',[3,3]}    
+            {'ElementName','Bmat_obm','DataType','double',  'Unit','nd',    'Description','Rotation Matrix NED to Body','Dimensions',[4,4]}    
            });
 
 %%CL05_EffectorBlender
@@ -265,5 +283,6 @@ bus_helper(struct('BusName','B_CL05_EffBlend','HeaderFile','','Desc','CL05 Effec
            {{'ElementName','symelv_cmd_deg','DataType','double',  'Unit','deg', 'Description','left elevon deflection in degrees'};
             {'ElementName','difelv_cmd_deg','DataType','double',  'Unit','deg', 'Description','right elevon deflection in degrees'};
             {'ElementName','drud_cmd_deg','DataType','double',  'Unit','deg', 'Description','rudder deflection in degrees'}
+            {'ElementName','fprop_cmd_lbf','DataType','double',  'Unit','lbf', 'Description','thrust command in lbf'}
            });
 
