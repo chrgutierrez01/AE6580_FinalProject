@@ -6,8 +6,8 @@ b = 60;
 c = 80;
 m = 300000;
 S_ref = 3603;
-g = [0 0 32.2];
-g_b = m*DCM*g';
+g = [0 0 32.2]; % this should just be [0 0 1]; see not below
+g_b = m*DCM*g'; %CG - I dont think you have to multiply this by g...since the mass is already in lbm and not slugs
 
 %% UNIT CORRECTIONS
 %There might need to be unit corrections to the effector deflection angles.
@@ -45,7 +45,7 @@ n = q_bar*b*S_ref*Cn;
 %% ROTATE TO RIGHT FRAME
 % This needs to be in the body frame (?) ensure the upstream is doing that
 % right.
-F = [-D*cos(alpha)+L*sin(alpha)+F_prop;Y;-D*sin(alpha)-L*cos(alpha)]+g_b;
+F = [-D*cosd(alpha)+L*sind(alpha)+F_prop;Y;-D*sind(alpha)-L*cosd(alpha)]+g_b;
 M = [l;m;n];
 
 end 
