@@ -97,10 +97,10 @@ addpath("lib/");
 % Initial Environment
 S_rho_ic_slft3 = 0.0023769;
 % Initial Bmat
-CL04_Bmat0_ic = [-2.27242708206177e-06	3.72529029846191e-08	0	0.000107333362393547;...
-    0 -0.0155 0.0066 0;...
-    0.0047 0 0 0;...
-    0 0.002 -0.0031 0];
+CL04_Bmat0_ic = [1.059	0	0.02663	0.000107333362393547;...
+    0 -112.6 45.03 0;...
+    32.36 0 0 0;...
+    0 1.824 -20.75 0];
 %CL04_Bmat0_ic = [0 -0.0155 0.0066; 0.0047 0 0; 0 0.002 -0.0031];
 
 % Initial Position
@@ -109,7 +109,7 @@ S_yi0_ic_ft = 0;
 S_zi0_ic_ft = -200;
 
 % Initial Velocity
-S_ub0_ic_fps = 5626;
+S_ub0_ic_fps = 6000;
 S_vb0_ic_fps = 0;
 S_wb0_ic_fps = 0;
 
@@ -119,7 +119,7 @@ S_betad0_ic_deg = rad2deg(asin(S_vb0_ic_fps/norm([S_ub0_ic_fps,S_vb0_ic_fps, S_w
 
 % Initial Euler Orientation
 S_phi0_ic_rad = 0;
-S_theta0_ic_rad = 7;
+S_theta0_ic_rad = pi/60;
 S_psi0_ic_rad = 0;
 
 
@@ -155,16 +155,17 @@ S_rud_rngdn_deg = -20;
 
 %%Gains
 %CL03_InnerLoopRegulator
-cl03_roll_kp = 0;
+cl03_roll_kp = 2.5;
+cl03_roll_ki = 6;
 
-cl03_pitch_kp = 0;
-cl03_pitch_ki = 0;
+cl03_pitch_kp = 4;
+cl03_pitch_ki = 6;
 cl03_pitch_kd = 0;
 
-cl03_yaw_kp = 0;
+cl03_yaw_kp = 2;
 cl03_yaw_ki = 0;
 
-cl03_as_kp = 0;
+cl03_as_kp = 0.5;
 cl03_as_ki = 0;
 cl03_as_kd = 0;
 
@@ -173,7 +174,8 @@ cl03_climb_ki = 0;
 
 %%Switch
 %CL05_EffBLend
-cl05_clawswitch = 0; %0 for off, 1 for on
+cl05_clawswitch = 1; %0 for off, 1 for on
+cl05_INDIswitch = 1; %0 for NDI, 1 for INDI
 
 
 
@@ -240,6 +242,9 @@ bus_helper(struct('BusName','B_S02_Plant','HeaderFile','','Desc','S02 Plant Simu
             {'ElementName','aybdot_state_fps2',       'DataType','double',  'Unit','fps2',   'Description','selected body y acceleration'};
             {'ElementName','azbdot_state_fps2',       'DataType','double',  'Unit','fps2',   'Description','selected body z acceleration'};
             {'ElementName','mach_state_nd',       'DataType','double',  'Unit','nd',   'Description','mach number'};
+            {'ElementName','pb_state_dps',       'DataType','double',  'Unit','dps',    'Description','selected body roll rate'};
+            {'ElementName','qb_state_dps',         'DataType','double',  'Unit','dps',   'Description','selected body pitch rate'};
+            {'ElementName','rb_state_dps', 'DataType','double',  'Unit','dps',   'Description','selected body yaw rate'};
            });
 
 %%CL01_CommandProcessing
@@ -275,7 +280,11 @@ bus_helper(struct('BusName','B_CL04_NDI','HeaderFile','','Desc','CL04 NDI Module
             {'ElementName','roll_state_obm_dps2','DataType','single',  'Unit','dps2', 'Description','roll acceleration calculated in degrees'};
             {'ElementName','pitch_state_obm_dps2','DataType','single',  'Unit','dps2', 'Description','pitch acceleration calculated in degrees'};
             {'ElementName','yaw_state_obm_dps2','DataType','single',  'Unit','dps2', 'Description','yaw acceleration calculated in degrees'};
-            {'ElementName','Bmat_obm','DataType','double',  'Unit','nd',    'Description','Rotation Matrix NED to Body','Dimensions',[4,4]}    
+            {'ElementName','Bmat_obm','DataType','double',  'Unit','nd',    'Description','Rotation Matrix NED to Body','Dimensions',[4,4]} 
+            {'ElementName','symelv_state_deg','DataType','single',  'Unit','deg',    'Description','Symmetric Elevon Command in Degrees'} 
+            {'ElementName','difelv_state_deg','DataType','single',  'Unit','deg',    'Description','Differential Elevon Command in Degrees'} 
+            {'ElementName','drud_state_deg','DataType','single',  'Unit','deg',    'Description','Rudder Command in Degrees'} 
+            {'ElementName','fprop_state_lbf','DataType','single',  'Unit','lbf',    'Description','Forward Prop Command in lbs'}
            });
 
 %%CL05_EffectorBlender
