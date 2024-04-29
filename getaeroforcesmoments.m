@@ -1,3 +1,7 @@
+%% GETAEROFORCESMOMENTS
+% Created by Christian Gutierrez and Alfonso Lopez
+% Computes forces and moments acting on the GHV CoG by summing aero
+% coefficients
 function [F, M, L, D, CL_c, CD_c, CY_c, Cl_c, Cm_c, Cn_c] = getaeroforcesmoments(DCM,V_b_fps, Omega_b_dps, delvl_deg, delvr_deg, drud_deg, betad_deg, alphad_deg, rho_sl_ft3, mach, F_prop)
 
 

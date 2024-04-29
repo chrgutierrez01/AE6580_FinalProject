@@ -1,4 +1,6 @@
-% Function that generates aero coefficients
+%% GETAEROCOEFFICIENTS
+% Generates aero coefficients based on vehicle states for the Generic
+% Hypersonic Vehicle. Function created by Kehmiri et al. 
 function [CLbv, CL_RE, CL_LE, CDbv, CD_RE, CD_LE, CD_RUD, CYB, CY_RE, CY_LE, ...
     CY_RUD, Cllbv, Cll_RE, Cll_LE, Cll_RUD, Cllr, Cllp, Cmbv, Cm_RE, ...
     Cm_LE, Cm_RUD, Cm_q, Cnbv, Cn_RE, Cn_LE, Cn_RUD, Cnp, Cnr] = getaerocoefficients(ALPHA, M, LE, RE, RUD)

@@ -1,107 +1,22 @@
-%  %% XXX Control Laws v0.1
-% % This top level page is used to build a set of Control Laws (CLAWs) for a vehicle. The
-% % basic organization is as follows:
-% % 
-% % * |top_level_claw_init.m|:  Initialize environment, variables & internal buses used in the Simulink diagram
-% % * |top_level_claw.slx|: The master Simulink diagram
-% % * |busdef_claw_input.m|: Bus definition file for the CLAW Input interface
-% % * |busdef_claw_output.m|: Bus definition file for the CLAW Output interface
-% % * |./cfg|: location of model configuration set files
-% % * |./doc|: location of documentation files
-% % * |./claw|: location of any referenced subsystems if they exist
-% % * |./lib|: location of custom libraries
-% % * |./onboard_model|: location of onboard model code
-% %
-% %
-% % clear all   % this causes problems with make_claw_release
-% %
-% %% Aircraft Specific Constants & Versioning
-% % CLAW identification, frame rate, versioning, build-date, and MATLAB version checks are performed here. The 
-% % CLAW version uses a MAJOR.MINOR.SAVE_COUNT version number. Major versions are scheduled official releases 
-% % (Load 0, Load 1, etc..), minor versions are internal Piasecki modifications, and save_count is an automatic
-% % Simulink save number to help differentiate internal work. When updating the major or minor version, the save
-% % count shall be reset to zero using: 
-% %    set_param('top_level_claw','ModelVersionFormat', sprintf('%d.%d.%%<AutoIncrement:1>',CLAW_INFO.version(1:2)))
-% % The CLAW version is encoded as a 32-bit integer using 100000000 + 100000*MAJOR + 1000*MINOR + SAVE_COUNT.
-% % MAJOR and MINOR must be <= 99 and SAVE_COUNT<=999. The version string can be reconstructed using :
-% %    y=num2str(CLAW_INFO.version_int);sprintf('%d.%d.%d',[str2num(y(3:4)), str2num(y(5:6)), str2num(y(7:9))])
-% % The build date is stored as a 32-bit integer as 'yyyymmmdd'.
-% CLAW_INFO.bdname = 'top_level_claw'; % Name of the top level block diagram file
-% CLAW_INFO.CLAW_ID = 'MY_CLAW_01'; % CLAW Identifier name
-% CLAW_INFO.DOC_ID = '000-C-00-00-00'; % PiAC Document ID Number
-% CLAW_VER_MAJOR = 0; % Remember to reset ModelVersionFormat when updating MAJOR or MINOR versions.
-% CLAW_VER_MINOR = 0;
-% t_step_sec = 0.01;          % sample time [sec]
-% % The directories listed in .paths are added to %PATH% and are relative to the location of this file itself. 
-% CLAW_INFO.paths.CLAW_DIR = '.\claw';  % location of referenced models used in top_level_claw.slx; default='claw'
-% 
-% v=ver('MATLAB');
-% if v.Release == "(R2017a)"
-%     CLAW_INFO.CLAW_REF_CONFIG = 'cfg\claw_ref_configuration_2017a.m';
-% else
-%     CLAW_INFO.CLAW_REF_CONFIG = 'cfg\claw_ref_configuration.m';
-% %     CLAW_REF_CONFIG = 'cfg\claw_ref_configuration_dll.m';  % uncomment to make a DLL  - don't use this - see py_build directory
-% end
-% 
-% 
-% %% Initialize the Environment 
-% % This section performs the environment initialization including setting
-% % the path up to load dependent libraries, add the claw directory to the path,
-% % and print a status banner.
-% %
-% global CLAW_TOP_LEVEL_DIR  LIB_DIR
-% LIB_DIR = '.\lib'; % relative path of the lib_piac library
-% LIB_PIAC = 'lib_piac'; % name of the lib_piac library file
-% [CLAW_TOP_LEVEL_DIR,init_script_name]=fileparts(mfilename('fullpath')); % get the location of the model directory
-% [~,AC_NAME] = fileparts(CLAW_TOP_LEVEL_DIR); % get the name of the aircraft these CLAWS are for
-% addpath(fullfile(CLAW_TOP_LEVEL_DIR,LIB_DIR));  % Add LIB_DIR to the path
-% load_system(fullfile(CLAW_TOP_LEVEL_DIR,LIB_DIR, LIB_PIAC)); % Load LIB_PIAC simulink model
-% cellfun(@(p) addpath(fullfile(CLAW_TOP_LEVEL_DIR,p)), struct2cell(CLAW_INFO.paths)) % add directories in paths to PATH
-% 
-% run(fullfile(CLAW_TOP_LEVEL_DIR,CLAW_INFO.CLAW_REF_CONFIG)); % run code generation configuration
-% 
-% CLAW_VER_SAVECOUNT = NaN;
-% if bdIsLoaded(CLAW_INFO.bdname)
-%     CLAW_VER_SAVECOUNT = sscanf(get_param(CLAW_INFO.bdname,'ModelVersion'),'%*d.%*d.%d');
-% end
-% CLAW_INFO.version = [CLAW_VER_MAJOR,CLAW_VER_MINOR,CLAW_VER_SAVECOUNT];
-% CLAW_INFO.version_int = int32(100000000 + CLAW_INFO.version*[100000;1000;1]);% encode version integer (10MMmmsss: MM.mm.sss) to avoid using a string constant in simulink
-% CLAW_INFO.version_str = sprintf('%d.%d.%d',CLAW_INFO.version);
-% CLAW_INFO.builddate_int = int32(str2num(datestr(now,'yyyymmdd'))); % store builddate in YYYYMMDD int32
+%% GHV NDI Control Laws V0.1
+% Initializes variables required to run the top_level_sim.slx simulation.
+% This script is called at t=0 before the initial propagation.
 
-% fprintf('\n================================== Init Environment ==================================\n')
-% fprintf(' * %s *\n',strjust(sprintf('%80s',[AC_NAME '/' init_script_name]),'center'));
-% fprintf(' * %80s *\n','');
-% fprintf(' * %s *\n',strjust(sprintf('%80s',CLAW_INFO.CLAW_ID),'center'))
-% fprintf(' * %s *\n',strjust(sprintf('%80s',sprintf(' %0.1f Hz rate',1/t_step_sec)),'center'))
-% fprintf(' * %80s *\n','');
-% fprintf(' * %s *\n',strjust(sprintf('%80s',CLAW_INFO.version_str),'center'))
-% fprintf(' * %80s *\n','');
-% fprintf(' * Base: %s *\n',strjust(sprintf('%74s',CLAW_TOP_LEVEL_DIR),'center'));
-% fprintf(' * CLAW: %s *\n',strjust(sprintf('%74s',CLAW_INFO.paths.CLAW_DIR),'center'));
-% fprintf(' * lib_piac v%s:  %s *\n',get_param('lib_piac','ModelVersion'),strjust(sprintf('%63s',which(LIB_PIAC)),'center'));
-% fprintf('======================================================================================\n\n')
-
-% try
-%     % if the goto labels are updated when this script is called from another model, an error will be raised.
-%     % Catch this error. Run this script directly to update goto labels.
-%     display_goto_destinations('top_level_claw',true)
-% catch
-%     disp('Skipping goto label updates.')
-% end
 addpath("lib/");
 
-%% Constants
+%% Simulator Setup - Constants
 %%Initial Conditions
 
 % Initial Environment
 S_rho_ic_slft3 = 0.0023769;
+
 % Initial Bmat
+% Look into calculating this instead of hard setting it
 CL04_Bmat0_ic = [1.059	0	0.02663	0.000107333362393547;...
     0 -112.6 45.03 0;...
     32.36 0 0 0;...
     0 1.824 -20.75 0];
-%CL04_Bmat0_ic = [0 -0.0155 0.0066; 0.0047 0 0; 0 0.002 -0.0031];
+
 
 % Initial Position
 S_xi0_ic_ft = 0;
@@ -153,17 +68,30 @@ S_rud_rngup_deg = 20;
 S_rud_rngdn_deg = -20;
 
 
+%% Simulator Setup
+%%Percent Errors - Used for testing robustness of the controller. Will
+%%change the values used in the controller vs those in the sim model.
+%%
+%%Example: pe = 0.1 then the resepective parameter will be set to 
+%%param = (1.1)*actual_param
+
+perr_mass = 0; %mass percent error
+perr_Ixx = 0; %mass percent error
+perr_Iyy = 0; %mass percent error
+perr_Izz = 0; %mass percent error
+
+
 %%Gains
 %CL03_InnerLoopRegulator
 cl03_roll_kp = 2.5;
-cl03_roll_ki = 6;
+cl03_roll_ki = 0;
 
 cl03_pitch_kp = 4;
 cl03_pitch_ki = 6;
 cl03_pitch_kd = 0;
 
 cl03_yaw_kp = 2;
-cl03_yaw_ki = 0;
+cl03_yaw_ki = 4;
 
 cl03_as_kp = 0.5;
 cl03_as_ki = 0;
@@ -176,18 +104,6 @@ cl03_climb_ki = 0;
 %CL05_EffBLend
 cl05_clawswitch = 1; %0 for off, 1 for on
 cl05_INDIswitch = 1; %0 for NDI, 1 for INDI
-
-
-
-
-%% Control Law Subsystem Parameters
-% This section lists parameters used by each control law subsystem.
-% Table Lookups
-
-%% Enumerated Data Types
-
-%% Checks
-
 
 %% Control Law Input/Output Buses  
 % These are autocoded using the ICD spreadsheets and icd_autocoder 
