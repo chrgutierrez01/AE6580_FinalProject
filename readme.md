@@ -1,7 +1,9 @@
-<!-- ABOUT THE PROJECT -->
+[-- ABOUT THE PROJECT ------]
 GHV NDI controller is a matlab/simulink CLAW simulation package for that simulates a Generic Hypersonic Vehicle being controlled by a Nonlinesr Dynamic Inversion controller
 
-<!-- CONTENTS -->
+
+
+[-- CONTENTS ------]
 This package contains the following files:
 
 $top_level_sim.slx
@@ -20,7 +22,9 @@ $Lib folder
 Contains various helper functions used in the model that assist with sim configuration and data processing.
 
 
-<!-- Execution -->
+
+
+[-- EXECUTION ------]
 The GHV NDI Controller is executed through the top_level_sim.slx file. To run the simulator, open this file and run the simulink model.  Inputs to the controller can be adjusted within the CommandProcessing module found within this file.
 
 
