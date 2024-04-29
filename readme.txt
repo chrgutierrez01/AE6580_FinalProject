@@ -25,10 +25,3 @@ The GHV NDI Controller is executed through the top_level_sim.slx file. To run th
 
 Vehicle parameters, CLAW settings, and initial conditions can be configured through the top_level_sim_init.m file. 
 
-
-**Service DNS**
-**`https://v.that1team.com:443` **
-
-http://thelads.ddns.net:80
-NP6UuqzUh4
-z8SxFZ9rFq
